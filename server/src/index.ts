@@ -15,7 +15,7 @@ const PORT = 4000;
 const main = async () => {
   await createConnection({
     type: "postgres",
-    database: "NAME_OF_YOUR_DATABASE",
+    database: "mangamia",
     username: "postgres",
     password: "postgres",
     url: process.env.DATABASE_URL,
