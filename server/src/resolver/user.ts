@@ -64,8 +64,7 @@ export class userResolver {
       return { errors };
     }
     const hashedPass = await argon2.hash(input.password);
-
-    console.log("before try");
+    
     let user;
     try {
       const userRepo = getRepository(User);

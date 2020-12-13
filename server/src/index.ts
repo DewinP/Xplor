@@ -15,7 +15,7 @@ const PORT = 4000;
 const main = async () => {
   await createConnection({
     type: "postgres",
-    database: "mangamia",
+    database: "xplor",
     username: "postgres",
     password: "postgres",
     url: process.env.DATABASE_URL,
@@ -44,7 +44,7 @@ const main = async () => {
         disableTouch: true,
       }),
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
