@@ -1,4 +1,4 @@
-import { theme as chakraTheme } from '@chakra-ui/core'
+import { theme as chakraTheme } from '@chakra-ui/react'
 
 const fonts = { ...chakraTheme.fonts, mono: `'Menlo', monospace` }
 
@@ -9,6 +9,9 @@ const theme = {
   colors: {
     ...chakraTheme.colors,
     black: '#16161D',
+    fushia: '#f05454',
+    orange: "$ffa45b",
+    darkish: '#2d4059'
   },
   fonts,
   breakpoints,

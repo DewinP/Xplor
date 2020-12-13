@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Link } from "@chakra-ui/core";
+import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
 import React from "react";
 import { Form, Formik } from "formik";
 import { Wrapper } from "../components/Wrapper";
@@ -8,12 +8,13 @@ import { withApollo } from "../utils/withApollo";
 import { useRouter } from "next/router";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useSignupMutation } from "../generated/graphql";
+import { Layout } from "../components/Layout";
 
 const Signup: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [signup] = useSignupMutation();
   return (
-    <Wrapper variant="small">
+    <Layout >
       <Heading mb={5} bg="tomato" textAlign="center" color="white">
         SIGNUP!
       </Heading>
@@ -64,7 +65,7 @@ const Signup: React.FC<{}> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 
