@@ -1,38 +1,50 @@
-// import { Field, ObjectType } from "type-graphql";
-// import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  UpdateDateColumn,
+  BaseEntity,
+} from "typeorm";
+import { User } from "./User";
 // import { Post } from "./Post";
-// import {User} from './User'
 
-// @ObjectType()
-// @Entity({ name: "communities" })
-// export class Community {
-//   @Field()  
-//   @PrimaryGeneratedColumn("uuid")
-//   id: string;
+@ObjectType()
+@Entity({ name: "communities" })
+export class Community extends BaseEntity {
+  @Field()
+  @PrimaryGeneratedColumn()
+  id: string;
 
-//   @Field()
-//   @Column({ length: 10, unique:true, nullable: false})
-//   name: string
+  @Field()
+  @Column({ length: 10, unique: true })
+  name: string;
 
-//   @Field()
-//   @Column({type: 'int', default:1})
-//   memberCount: number;
+  @Field()
+  @Column({ length: 40 })
+  title: string;
 
-//   @Field()
-//   @OneToMany(()=> Post, (post) => post.community)
-//   posts: Post[];
+  @Field()
+  @Column({ length: 250 })
+  description: string;
 
-//   @Field()
-//   @ManyToOne(()=> User, (user) => user.communities)
-//   members: User[];
+  @Field()
+  @Column({ type: "int", default: 1 })
+  memberCount: number;
 
-//   @Field()
-//   @ManyToOne(()=> User, (user) => user.myCommunities)
-//   creator: User;
+  @ManyToOne(() => User, (user) => user.ownedCommunities)
+  owner: User;
 
-//   @Field()
-//   @Column()
-//   lastPost: Date
+  @Field()
+  @Column()
+  ownerId: number;
 
+  @Field(() => String)
+  @UpdateDateColumn()
+  createdAt: Date;
 
-// }
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

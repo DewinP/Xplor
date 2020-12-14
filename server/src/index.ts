@@ -9,6 +9,8 @@ import Redis from "ioredis";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { __prod__, COOKIE_NAME } from "./constants";
+import { communityResolver } from "./resolver/community";
+import { Community } from "./entity/Community";
 
 const PORT = 4000;
 
@@ -21,7 +23,7 @@ const main = async () => {
     url: process.env.DATABASE_URL,
     synchronize: true,
     logging: true,
-    entities: [User],
+    entities: [User, Community],
   });
 
   const app = express();
@@ -57,7 +59,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [userResolver],
+      resolvers: [userResolver, communityResolver],
       validate: false,
     }),
     //context is accesible by all resolvers

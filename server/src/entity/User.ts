@@ -1,13 +1,21 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-// import { Community } from "./Community";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BaseEntity,
+} from "typeorm";
+import { Community } from "./Community";
 // import { Post } from "./Post";
 
 @ObjectType()
 @Entity({ name: "users" })
-export class User {
+export class User extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Field()
@@ -24,18 +32,17 @@ export class User {
   })
   avatar: string;
 
-  // @Field()
-  // @OneToMany(()=> Post, (post) => post.creator)
-  // posts: Post[];
-
-  // @Field()
-  // @OneToMany(()=> Community, (community) => community.creator)
-  // myCommunities!: Community[];
-
-  // @Field()
-  // @ManyToOne(()=> Community, (community) => community.members)
-  // communities!: Community[];
+  @OneToMany(() => Community, (community) => community.owner)
+  ownedCommunities: Community[];
 
   @Column()
   password: string;
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
