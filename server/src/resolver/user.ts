@@ -16,6 +16,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { v4 } from "uuid";
 import { sendEmail } from "../utils/sendEmail";
+import { Community } from "../entity/Community";
 
 @InputType()
 export class UserInput {
@@ -53,6 +54,25 @@ class UserResponse {
 
 @Resolver()
 export class userResolver {
+  //subbedCommunities, get users communityes where user is admin
+  @Query(() => [Community], { nullable: true })
+  subbedCommunities(): Promise<Community[] | undefined> {
+    let communityRepo = getRepository(Community);
+    return communityRepo.find({ relations: ["members"] });
+  }
+
+  //ownedCommunities, get users communityes where user is admin
+  @Query(() => [Community], { nullable: true })
+  ownedCommunities(
+    @Ctx() { req }: MyContext
+  ): Promise<Community[] | undefined> {
+    let communityRepo = getRepository(Community);
+    return communityRepo.find({
+      where: {
+        ownerId: req.session.userId,
+      },
+    });
+  }
   //Signup Mutation to create a new user
   @Mutation(() => UserResponse)
   async signup(
@@ -64,7 +84,7 @@ export class userResolver {
       return { errors };
     }
     const hashedPass = await argon2.hash(input.password);
-    
+
     let user;
     try {
       const userRepo = getRepository(User);
@@ -159,8 +179,9 @@ export class userResolver {
       return null;
     }
     const userRepo = getRepository(User);
+    console.log("heheheheh", req.session.userId);
 
-    return userRepo.findOne(req.session.id);
+    return userRepo.findOne(req.session.userId);
   }
 
   //Logout. Destroy cookie
@@ -174,7 +195,6 @@ export class userResolver {
           resolve(false);
           return;
         }
-
         resolve(true);
       })
     );

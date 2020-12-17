@@ -10,6 +10,7 @@ import {
 } from "type-graphql";
 import { getRepository } from "typeorm";
 import { Community } from "../entity/Community";
+import { User } from "../entity/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 
@@ -44,6 +45,25 @@ export class CommunityInput {
 
 Resolver();
 export class communityResolver {
+  //members, gets all members of the community
+  @Query(() => [User])
+  async communityMembers(
+    @Arg("name", () => String) name: string
+  ): Promise<User[]> {
+    let userRepo = getRepository(User);
+    let members = userRepo.find({
+      relations: ["members"],
+      where: {
+        community: {
+          name: name,
+        },
+      },
+    });
+
+    return members;
+  }
+
+  //createCommunity, creates a community
   @Mutation(() => Community)
   @UseMiddleware(isAuth)
   async createCommunity(
@@ -63,6 +83,7 @@ export class communityResolver {
     return community;
   }
 
+  //community, gets one community by name
   @Query(() => Community)
   async community(
     @Arg("name", () => String) name: string
@@ -71,6 +92,7 @@ export class communityResolver {
     return communityRepo.findOne({ name: name });
   }
 
+  //allCommunities, get all communities avaliable
   @Query(() => [Community])
   async allCommunties(): Promise<Community[] | undefined> {
     const communityRepo = getRepository(Community);

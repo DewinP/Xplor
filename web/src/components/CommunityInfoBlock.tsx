@@ -4,6 +4,7 @@ import { FiPlus } from "react-icons/fi";
 import { Community } from "../generated/graphql";
 import NextLink from "next/link";
 import { sinceFormat } from "../utils/date/sinceFormat";
+import { useRouter } from "next/router";
 
 interface CommunityInfoBlockProps {
   community: Community;
@@ -12,6 +13,7 @@ interface CommunityInfoBlockProps {
 export const CommunityInfoBlock: React.FC<CommunityInfoBlockProps> = ({
   community,
 }) => {
+  let router = useRouter();
   return (
     <Stack
       flexDir="column"
@@ -24,16 +26,15 @@ export const CommunityInfoBlock: React.FC<CommunityInfoBlockProps> = ({
     >
       <Flex align="center" justify="space-between">
         <Box textAlign="left">
-          <NextLink href={`/c/${community.name}`}>
-            <Button
-              fontSize="20px"
-              fontWeight="bold"
-              variant="link"
-              textAlign="left"
-            >
-              c/{community.name}
-            </Button>
-          </NextLink>
+          <Button
+            onClick={() => router.push(`c/${community.name}`)}
+            fontSize="20px"
+            fontWeight="bold"
+            variant="link"
+            textAlign="left"
+          >
+            c/{community.name}
+          </Button>
           <Text>{community.description}</Text>
         </Box>
         <Button leftIcon={<FiPlus />}>Subscribe</Button>

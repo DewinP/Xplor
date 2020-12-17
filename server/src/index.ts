@@ -4,13 +4,15 @@ import { buildSchema } from "type-graphql";
 import express from "express";
 import { userResolver } from "./resolver/user";
 import { User } from "./entity/User";
+import { Post } from "./entity/Post";
+import { Community } from "./entity/Community";
 import session from "express-session";
 import Redis from "ioredis";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { __prod__, COOKIE_NAME } from "./constants";
 import { communityResolver } from "./resolver/community";
-import { Community } from "./entity/Community";
+import { postResolver } from "./resolver/post";
 
 const PORT = 4000;
 
@@ -21,9 +23,9 @@ const main = async () => {
     username: "postgres",
     password: "postgres",
     url: process.env.DATABASE_URL,
-    synchronize: true,
     logging: true,
-    entities: [User, Community],
+    synchronize: true,
+    entities: [User, Community, Post],
   });
 
   const app = express();
@@ -59,7 +61,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [userResolver, communityResolver],
+      resolvers: [userResolver, communityResolver, postResolver],
       validate: false,
     }),
     //context is accesible by all resolvers

@@ -7,16 +7,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  ManyToMany,
 } from "typeorm";
 import { Community } from "./Community";
-// import { Post } from "./Post";
+import { Post } from "./Post";
 
 @ObjectType()
 @Entity({ name: "users" })
 export class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id: string;
+  id!: number;
 
   @Field()
   @Column({ length: 10, unique: true })
@@ -32,8 +33,11 @@ export class User extends BaseEntity {
   })
   avatar: string;
 
-  @OneToMany(() => Community, (community) => community.owner)
-  ownedCommunities: Community[];
+  @ManyToMany(() => Community, (community) => community.members)
+  subscribed: Community[];
+
+  @OneToMany(() => Post, (post) => post.author)
+  posts: Post[];
 
   @Column()
   password: string;

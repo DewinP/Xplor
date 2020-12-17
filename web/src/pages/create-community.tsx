@@ -1,20 +1,22 @@
 import { Box, Button, Stack, Heading, Text } from "@chakra-ui/react";
 import { Formik, Form, ErrorMessage } from "formik";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
 import { useCreateCommunityMutation } from "../generated/graphql";
-import { getCommunityNameFromUrl } from "../utils/getCommunityNameFromUrl";
-import { toErrorMap } from "../utils/toErrorMap";
+import { useIsAuth } from "../utils/useIsAuth";
 import { withApollo } from "../utils/withApollo";
+// import { getCommunityNameFromUrl } from "../utils/getCommunityNameFromUrl";
+// import { toErrorMap } from "../utils/toErrorMap";
+// import { withApollo } from "../utils/withApollo";
 
 interface createCommunityProps {}
 
 const createCommunity: React.FC<createCommunityProps> = ({}) => {
-  const [createCommunity] = useCreateCommunityMutation();
   const router = useRouter();
-  console.log(getCommunityNameFromUrl());
+  useIsAuth();
+  const [createCommunity] = useCreateCommunityMutation();
   return (
     <Layout hideSidebar>
       <Box w="600px" maxW="100%" marginX="auto">

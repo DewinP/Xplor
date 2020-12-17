@@ -13,9 +13,19 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  subbedCommunities?: Maybe<Array<Community>>;
+  ownedCommunities?: Maybe<Array<Community>>;
   me?: Maybe<User>;
+  communityMembers: Array<User>;
   community: Community;
   allCommunties: Array<Community>;
+  post?: Maybe<Post>;
+  communityPosts?: Maybe<Array<Post>>;
+};
+
+
+export type QueryCommunityMembersArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -23,9 +33,31 @@ export type QueryCommunityArgs = {
   name: Scalars['String'];
 };
 
+
+export type QueryPostArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type QueryCommunityPostsArgs = {
+  communityId: Scalars['Float'];
+};
+
+export type Community = {
+  __typename?: 'Community';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  memberCount: Scalars['Float'];
+  ownerId: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type User = {
   __typename?: 'User';
-  id: Scalars['String'];
+  id: Scalars['Float'];
   username: Scalars['String'];
   email: Scalars['String'];
   avatar: Scalars['String'];
@@ -33,14 +65,13 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
-export type Community = {
-  __typename?: 'Community';
-  id: Scalars['String'];
-  name: Scalars['String'];
+export type Post = {
+  __typename?: 'Post';
+  id: Scalars['Float'];
   title: Scalars['String'];
-  description: Scalars['String'];
-  memberCount: Scalars['Float'];
-  ownerId: Scalars['Float'];
+  body: Scalars['String'];
+  authorId: Scalars['Float'];
+  communityId: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -52,6 +83,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   createCommunity: Community;
+  createPost: Post;
 };
 
 
@@ -73,6 +105,11 @@ export type MutationForgotPasswordArgs = {
 
 export type MutationCreateCommunityArgs = {
   input: CommunityInput;
+};
+
+
+export type MutationCreatePostArgs = {
+  input: PostInput;
 };
 
 export type UserResponse = {
@@ -100,6 +137,12 @@ export type CommunityInput = {
   description: Scalars['String'];
 };
 
+export type PostInput = {
+  title: Scalars['String'];
+  body: Scalars['String'];
+  communityId: Scalars['Float'];
+};
+
 export type RegularCommunityFragment = (
   { __typename?: 'Community' }
   & Pick<Community, 'name' | 'ownerId' | 'createdAt' | 'updatedAt' | 'memberCount' | 'id' | 'title' | 'description'>
@@ -108,6 +151,11 @@ export type RegularCommunityFragment = (
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'body' | 'communityId' | 'authorId'>
 );
 
 export type RegularUserFragment = (
@@ -139,6 +187,19 @@ export type CreateCommunityMutation = (
   ) }
 );
 
+export type CreatePostMutationVariables = Exact<{
+  input: PostInput;
+}>;
+
+
+export type CreatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost: (
+    { __typename?: 'Post' }
+    & RegularPostFragment
+  ) }
+);
+
 export type LoginMutationVariables = Exact<{
   usernameOrEmail: Scalars['String'];
   password: Scalars['String'];
@@ -151,6 +212,14 @@ export type LoginMutation = (
     { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
   ) }
+);
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
 );
 
 export type SignupMutationVariables = Exact<{
@@ -190,6 +259,19 @@ export type CommunityQuery = (
   ) }
 );
 
+export type CommunityPostsQueryVariables = Exact<{
+  communityId: Scalars['Float'];
+}>;
+
+
+export type CommunityPostsQuery = (
+  { __typename?: 'Query' }
+  & { communityPosts?: Maybe<Array<(
+    { __typename?: 'Post' }
+    & RegularPostFragment
+  )>> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -199,6 +281,17 @@ export type MeQuery = (
     { __typename?: 'User' }
     & RegularUserFragment
   )> }
+);
+
+export type OwnedCommunitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OwnedCommunitiesQuery = (
+  { __typename?: 'Query' }
+  & { ownedCommunities?: Maybe<Array<(
+    { __typename?: 'Community' }
+    & RegularCommunityFragment
+  )>> }
 );
 
 export const RegularCommunityFragmentDoc = gql`
@@ -211,6 +304,17 @@ export const RegularCommunityFragmentDoc = gql`
   id
   title
   description
+}
+    `;
+export const RegularPostFragmentDoc = gql`
+    fragment RegularPost on Post {
+  id
+  createdAt
+  updatedAt
+  title
+  body
+  communityId
+  authorId
 }
     `;
 export const RegularErrorFragmentDoc = gql`
@@ -270,6 +374,38 @@ export function useCreateCommunityMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateCommunityMutationHookResult = ReturnType<typeof useCreateCommunityMutation>;
 export type CreateCommunityMutationResult = Apollo.MutationResult<CreateCommunityMutation>;
 export type CreateCommunityMutationOptions = Apollo.BaseMutationOptions<CreateCommunityMutation, CreateCommunityMutationVariables>;
+export const CreatePostDocument = gql`
+    mutation CreatePost($input: PostInput!) {
+  createPost(input: $input) {
+    ...RegularPost
+  }
+}
+    ${RegularPostFragmentDoc}`;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
+
+/**
+ * __useCreatePostMutation__
+ *
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, baseOptions);
+      }
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   login(usernameOrEmail: $usernameOrEmail, password: $password) {
@@ -303,6 +439,35 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, baseOptions);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const SignupDocument = gql`
     mutation Signup($input: UserInput!) {
   signup(input: $input) {
@@ -400,6 +565,39 @@ export function useCommunityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type CommunityQueryHookResult = ReturnType<typeof useCommunityQuery>;
 export type CommunityLazyQueryHookResult = ReturnType<typeof useCommunityLazyQuery>;
 export type CommunityQueryResult = Apollo.QueryResult<CommunityQuery, CommunityQueryVariables>;
+export const CommunityPostsDocument = gql`
+    query CommunityPosts($communityId: Float!) {
+  communityPosts(communityId: $communityId) {
+    ...RegularPost
+  }
+}
+    ${RegularPostFragmentDoc}`;
+
+/**
+ * __useCommunityPostsQuery__
+ *
+ * To run a query within a React component, call `useCommunityPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommunityPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommunityPostsQuery({
+ *   variables: {
+ *      communityId: // value for 'communityId'
+ *   },
+ * });
+ */
+export function useCommunityPostsQuery(baseOptions?: Apollo.QueryHookOptions<CommunityPostsQuery, CommunityPostsQueryVariables>) {
+        return Apollo.useQuery<CommunityPostsQuery, CommunityPostsQueryVariables>(CommunityPostsDocument, baseOptions);
+      }
+export function useCommunityPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommunityPostsQuery, CommunityPostsQueryVariables>) {
+          return Apollo.useLazyQuery<CommunityPostsQuery, CommunityPostsQueryVariables>(CommunityPostsDocument, baseOptions);
+        }
+export type CommunityPostsQueryHookResult = ReturnType<typeof useCommunityPostsQuery>;
+export type CommunityPostsLazyQueryHookResult = ReturnType<typeof useCommunityPostsLazyQuery>;
+export type CommunityPostsQueryResult = Apollo.QueryResult<CommunityPostsQuery, CommunityPostsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -432,3 +630,35 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const OwnedCommunitiesDocument = gql`
+    query OwnedCommunities {
+  ownedCommunities {
+    ...RegularCommunity
+  }
+}
+    ${RegularCommunityFragmentDoc}`;
+
+/**
+ * __useOwnedCommunitiesQuery__
+ *
+ * To run a query within a React component, call `useOwnedCommunitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOwnedCommunitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOwnedCommunitiesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOwnedCommunitiesQuery(baseOptions?: Apollo.QueryHookOptions<OwnedCommunitiesQuery, OwnedCommunitiesQueryVariables>) {
+        return Apollo.useQuery<OwnedCommunitiesQuery, OwnedCommunitiesQueryVariables>(OwnedCommunitiesDocument, baseOptions);
+      }
+export function useOwnedCommunitiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OwnedCommunitiesQuery, OwnedCommunitiesQueryVariables>) {
+          return Apollo.useLazyQuery<OwnedCommunitiesQuery, OwnedCommunitiesQueryVariables>(OwnedCommunitiesDocument, baseOptions);
+        }
+export type OwnedCommunitiesQueryHookResult = ReturnType<typeof useOwnedCommunitiesQuery>;
+export type OwnedCommunitiesLazyQueryHookResult = ReturnType<typeof useOwnedCommunitiesLazyQuery>;
+export type OwnedCommunitiesQueryResult = Apollo.QueryResult<OwnedCommunitiesQuery, OwnedCommunitiesQueryVariables>;

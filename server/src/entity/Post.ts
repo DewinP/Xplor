@@ -3,33 +3,45 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  // ManyToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-// import { User } from "./User";
+import { Community } from "./Community";
+import { User } from "./User";
 
 @ObjectType()
 @Entity({ name: "posts" })
 export class Post {
   @Field()
   @PrimaryGeneratedColumn()
-  id: string;
+  id!: number;
 
   @Field()
   @Column({ length: 70 })
   title: string;
 
   @Field()
-  @Column({ type: "text", length: "1000" })
+  @Column({ type: "text" })
   body: string;
 
-  // @ManyToOne(() => User, (user) => user.posts)
-  // creator: User;
+  @ManyToOne(() => User, (user) => user.posts)
+  author: User;
 
   @Field()
-  @Column({ type: "int", default: 0 })
-  votes: number;
+  @Column()
+  authorId: number;
+
+  @ManyToOne(() => Community, (community) => community.posts)
+  community: Community;
+
+  @Field()
+  @Column()
+  communityId: number;
+
+  // @Field()
+  // @Column({ type: "int", default: 0 })
+  // votes: number;
 
   @Field(() => String)
   @CreateDateColumn()

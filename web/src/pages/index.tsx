@@ -1,13 +1,13 @@
-import {Layout} from "../components/Layout";
-import {Box} from '@chakra-ui/react'
+import { Layout } from "../components/Layout";
+import { Box } from "@chakra-ui/react";
+import { withApollo } from "../utils/withApollo";
 
 const Index = () => {
-return(
+  return (
     <Layout>
-        <Box>Hello</Box>
+      <Box>Hello</Box>
     </Layout>
-
-)
+  );
 };
 
-export default Index;
+export default withApollo({ ssr: true })(Index);

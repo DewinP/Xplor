@@ -1,0 +1,5 @@
+query CommunityPosts($communityId: Float!) {
+  communityPosts(communityId: $communityId) {
+    ...RegularPost
+  }
+}

@@ -6,39 +6,42 @@ import {
   Image,
   Button,
   Stack,
+  Icon,
 } from "@chakra-ui/react";
 import React from "react";
 import { Community } from "../generated/graphql";
 import { FiPlus } from "react-icons/fi";
-
+import { RiGroup2Fill } from "react-icons/ri";
 interface CommunityHeaderProps {
   community: Community;
 }
-
 export const CommunityHeader: React.FC<CommunityHeaderProps> = ({
   community,
 }) => {
   return (
     <Box>
-      <Flex h="150px" bgColor="orange" w="100%" align="center" justify="center">
+      <Flex h="150px" w="100%" align="center" justify="center">
         <Heading>{community.title}</Heading>
       </Flex>
-      <Flex h="75px" bgColor="darkish" align="center" justify="center">
+      <Flex
+        h="75px"
+        align="center"
+        justify="center"
+        boxShadow="0 1px 2px -2px white"
+      >
         <Flex w="1100px" align="center" mx="10px" justify="space-between">
-          <Flex>
-            <Image
-              borderRadius="full"
-              border="2px solid white"
-              mr="10px"
-              boxSize="80px"
+          <Flex align="center">
+            <Icon
+              color="beige"
               mt="-20px"
-              zIndex="1"
-              src="https://bit.ly/sage-adebayo"
+              as={RiGroup2Fill}
+              width="100px"
+              height="100px"
             />
             <Text fontSize="30px">c/{community.name}</Text>
           </Flex>
           <Box>
-            <Button leftIcon={<FiPlus />} colorScheme="teal">
+            <Button size="sm" leftIcon={<FiPlus />} colorScheme="teal">
               Subscribe
             </Button>
           </Box>

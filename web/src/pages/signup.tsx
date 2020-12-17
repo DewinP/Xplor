@@ -8,9 +8,11 @@ import { useRouter } from "next/router";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useSignupMutation } from "../generated/graphql";
 import { Layout } from "../components/Layout";
+import { useApolloClient } from "@apollo/client";
 
 const Signup: React.FC<{}> = ({}) => {
   const router = useRouter();
+  let apolloClient = useApolloClient();
   const [signup] = useSignupMutation();
   return (
     <Layout hideSidebar>
@@ -27,7 +29,8 @@ const Signup: React.FC<{}> = ({}) => {
               setErrors(toErrorMap(response.data.signup.errors));
             } else if (response.data?.signup.user) {
               // worked
-              router.push("/login");
+              apolloClient.resetStore();
+              router.push("/");
             }
           }}
         >

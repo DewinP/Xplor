@@ -14,7 +14,13 @@ const createClient = (ctx: NextPageContext) =>
     },
     cache: new InMemoryCache({
       typePolicies: {
-        Query: {},
+        Query: {
+          fields: {
+            user: {
+              //Would like to call my useGetUserQuery and store the user in cache
+            },
+          },
+        },
       },
     }),
   });

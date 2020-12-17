@@ -13,7 +13,7 @@ const theme = extendTheme({
   colors: {
     white: "#ffffff",
     black: "#16161D",
-    fushia: "#f05454",
+    red: "#f05454",
     orange: "#ffa45b",
     darkish: "#2d4059",
     green: "#61b15a",

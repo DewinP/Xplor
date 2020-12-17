@@ -8,10 +8,12 @@ import { withApollo } from "../utils/withApollo";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { Layout } from "../components/Layout";
+import { useApolloClient } from "@apollo/client";
 
 const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [login] = useLoginMutation();
+  let apolloClient = useApolloClient();
   return (
     <Layout hideSidebar>
       <Stack maxW="400px" justify="center" mx="auto">
@@ -33,7 +35,8 @@ const Login: React.FC<{}> = ({}) => {
               if (typeof router.query.next === "string") {
                 router.push(router.query.next);
               } else {
-                // worked
+                // resetStore refetches all active queries
+                await apolloClient.cache.reset();
                 router.push("/");
               }
             }
